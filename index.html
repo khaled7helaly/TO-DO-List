@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>مهامي — قائمة المهام</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Tajawal:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            kufi: ['"Reem Kufi"', 'Tajawal', 'sans-serif'],
+            tajawal: ['Tajawal', '"Segoe UI"', 'Tahoma', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --bg: #F7F4EE;
+      --surface: #FFFFFF;
+      --ink: #22281F;
+      --muted: #7A8177;
+
+      --primary: #2A5F44;
+      --primary-soft: #DCEAE1;
+      --border: #E4E0D6;
+
+      --danger: #B5493B;
+      --today: #BE8A2E;
+
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #171B15;
+        --surface: #1D2318;
+        --ink: #E8E6DE;
+        --muted: #8B9187;
+
+        --primary: #6FBF95;
+        --primary-soft: #24352C;
+        --border: #333B2E;
+
+        --danger: #D97C6C;
+        --today: #E0B368;
+
+        color-scheme: dark;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #171B15;
+      --surface: #1D2318;
+      --ink: #E8E6DE;
+      --muted: #8B9187;
+
+      --primary: #6FBF95;
+      --primary-soft: #24352C;
+      --border: #333B2E;
+
+      --danger: #D97C6C;
+      --today: #E0B368;
+
+      color-scheme: dark;
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    body {
+      background: var(--bg);
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    li.task.done .chk {
+      background: var(--primary);
+    }
+
+    li.task.done .txt {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .bar.has-count {
+      background: var(--primary);
+    }
+
+    .bar.today {
+      background: var(--today);
+    }
+
+    *:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+
+<body class="m-0 bg-[var(--bg)] text-[var(--ink)] font-tajawal px-[18px] pt-[max(28px,env(safe-area-inset-top,0px))] pb-[max(40px,env(safe-area-inset-bottom,0px))]">
+
+  <div class="max-w-[600px] mx-auto">
+
+
+    <!-- ========================================= -->
+    <!-- Language and Theme Controls                -->
+    <!-- Used to switch language and color theme   -->
+    <!-- ========================================= -->
+
+    <div class="flex justify-end gap-2 mb-3">
+
+      <button
+        id="langToggle"
+        class="text-xs px-2.5 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] font-tajawal">
+        English
+      </button>
+
+      <button
+        id="themeToggle"
+        class="text-base px-2 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]">
+        🌙
+      </button>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Header and Date Navigation                 -->
+    <!-- Contains app title and selected date      -->
+    <!-- ========================================= -->
+
+    <header class="text-center mb-8">
+
+      <h1
+        id="headline"
+        data-i18n="headline"
+        class="font-kufi text-[2.2rem] font-bold mb-1.5 text-[var(--primary)]">
+        مهامي
+      </h1>
+
+      <!-- Previous / Current Date / Next -->
+      <div class="flex items-center justify-center gap-3">
+
+        <button
+          id="prevDay"
+          data-i18n="prevDay"
+          class="text-xs px-2.5 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]">
+          السابق
+        </button>
+
+        <p
+          id="viewDate"
+          class="m-0 text-[var(--muted)] text-sm min-w-[150px]">
+        </p>
+
+        <button
+          id="nextDay"
+          data-i18n="nextDay"
+          class="text-xs px-2.5 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]">
+          التالي
+        </button>
+
+      </div>
+
+      <!-- Button to return to today's date -->
+      <button
+        id="todayJump"
+        data-i18n="todayJump"
+        class="mt-1.5 text-xs underline text-[var(--primary)] hidden">
+        ارجع للنهاردة
+      </button>
+
+    </header>
+
+
+    <!-- ========================================= -->
+    <!-- Task Input and Add Button                  -->
+    <!-- Used to create a new task                 -->
+    <!-- ========================================= -->
+
+    <section class="flex items-center gap-2.5 pb-4 border-b-2 border-[var(--border)] mb-6">
+
+      <input
+        type="text"
+        id="taskInput"
+        data-i18n-placeholder="placeholder"
+        data-i18n-aria="inputAria"
+        placeholder="أضف مهمة جديدة…"
+        aria-label="مهمة جديدة"
+        class="flex-1 border-0 bg-transparent text-[var(--ink)] font-tajawal text-base py-2 px-0.5 outline-none placeholder:text-[var(--muted)]"
+      >
+
+      <button
+        id="addBtn"
+        data-i18n-aria="addLabel"
+        aria-label="إضافة المهمة"
+        class="w-[38px] h-[38px] rounded-full border-0 bg-[var(--primary)] text-[var(--surface)] text-xl leading-none cursor-pointer hover:opacity-90 shrink-0">
+        +
+      </button>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- Task Statistics                            -->
+    <!-- Displays total, completed, pending,      -->
+    <!-- and completion percentage                 -->
+    <!-- ========================================= -->
+
+    <section class="flex mb-8">
+
+      <!-- Total Tasks -->
+      <div class="flex-1 text-center">
+        <b
+          class="block text-2xl font-bold"
+          id="statTotal">
+          0
+        </b>
+
+        <span
+          data-i18n="statAll"
+          class="text-[var(--muted)] text-xs">
+          الكل
+        </span>
+      </div>
+
+
+      <!-- Completed Tasks -->
+      <div class="flex-1 text-center [&:not(:first-child)]:border-s [&:not(:first-child)]:border-[var(--border)]">
+
+        <b
+          class="block text-2xl font-bold"
+          id="statDone">
+          0
+        </b>
+
+        <span
+          data-i18n="statDone"
+          class="text-[var(--muted)] text-xs">
+          منجزة
+        </span>
+
+      </div>
+
+
+      <!-- Pending Tasks -->
+      <div class="flex-1 text-center [&:not(:first-child)]:border-s [&:not(:first-child)]:border-[var(--border)]">
+
+        <b
+          class="block text-2xl font-bold"
+          id="statPending">
+          0
+        </b>
+
+        <span
+          data-i18n="statPending"
+          class="text-[var(--muted)] text-xs">
+          متبقية
+        </span>
+
+      </div>
+
+
+      <!-- Completion Percentage -->
+      <div class="flex-1 text-center [&:not(:first-child)]:border-s [&:not(:first-child)]:border-[var(--border)]">
+
+        <b
+          class="block text-2xl font-bold"
+          id="statPct">
+          0%
+        </b>
+
+        <span
+          data-i18n="statPct"
+          class="text-[var(--muted)] text-xs">
+          نسبة الإنجاز
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- Task Filters and Task List                 -->
+    <!-- Used to filter and display tasks          -->
+    <!-- ========================================= -->
+
+    <section class="mb-8">
+
+
+      <!-- Task Filter Tabs -->
+      <div class="flex gap-4 mb-3.5 border-b border-[var(--border)]">
+
+        <!-- All Tasks -->
+        <button
+          data-i18n="tabAll"
+          class="tab active bg-transparent border-0 border-b-2 border-transparent -mb-px cursor-pointer text-[var(--muted)] font-tajawal text-sm pt-2 pb-2.5 px-0.5"
+          data-filter="all">
+          الكل
+        </button>
+
+
+        <!-- Active Tasks -->
+        <button
+          data-i18n="tabActive"
+          class="tab bg-transparent border-0 border-b-2 border-transparent -mb-px cursor-pointer text-[var(--muted)] font-tajawal text-sm pt-2 pb-2.5 px-0.5"
+          data-filter="active">
+          نشطة
+        </button>
+
+
+        <!-- Completed Tasks -->
+        <button
+          data-i18n="tabDone"
+          class="tab bg-transparent border-0 border-b-2 border-transparent -mb-px cursor-pointer text-[var(--muted)] font-tajawal text-sm pt-2 pb-2.5 px-0.5"
+          data-filter="done">
+          منجزة
+        </button>
+
+      </div>
+
+
+      <!-- Dynamic Task List -->
+      <ul
+        id="list"
+        class="list-none m-0 p-0">
+      </ul>
+
+
+      <!-- Empty State -->
+      <p
+        class="empty text-center text-[var(--muted)] py-6 text-sm"
+        id="emptyMsg"
+        data-i18n="empty"
+        hidden>
+        لسه مفيش مهام هنا، ابدأ بإضافة أول مهمة
+      </p>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- Monthly Progress Chart                     -->
+    <!-- Displays completed tasks for each day    -->
+    <!-- of the current month                      -->
+    <!-- ========================================= -->
+
+    <section class="pt-6 border-t border-[var(--border)]">
+
+      <!-- Chart Header -->
+      <div class="flex justify-between items-baseline mb-3.5">
+
+        <h2
+          data-i18n="chartTitle"
+          class="text-base m-0 font-bold">
+          التقدم خلال الشهر
+        </h2>
+
+        <span
+          id="monthLabel"
+          class="text-[var(--muted)] text-sm">
+        </span>
+
+      </div>
+
+
+      <!-- Dynamic Chart Bars -->
+      <div
+        class="flex items-end gap-[3px] h-[110px] overflow-x-auto pb-0.5"
+        id="bars">
+      </div>
+
+    </section>
+
+  </div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
+
