@@ -35,10 +35,12 @@
 
   <!-- Custom CSS -->
   <style>
-    :root {
-      --bg: #F7F4EE;
+    :root[data-theme="light"] body {
+      --bg: #fffefe;
+       --bg2: #2A5F44;
       --surface: #FFFFFF;
-      --ink: #22281F;
+      --ink: #000000;
+      --text: #ffffff;
       --muted: #7A8177;
 
       --primary: #2A5F44;
@@ -48,12 +50,20 @@
       --danger: #B5493B;
       --today: #BE8A2E;
 
+      --success: #28704B;
+      --success-soft: #DCEAE1;
+      --undo: #555B55;
+      --undo-soft: #E5E5E5;
+
       color-scheme: light;
+
+
     }
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         --bg: #171B15;
+        --bg2: #1D2318;
         --surface: #1D2318;
         --ink: #E8E6DE;
         --muted: #8B9187;
@@ -65,7 +75,14 @@
         --danger: #D97C6C;
         --today: #E0B368;
 
+        --success: #6FBF95;
+        --success-soft: #24352C;
+        --undo: #B0B5AE;
+        --undo-soft: #333831;
+
         color-scheme: dark;
+
+        
       }
     }
 
@@ -81,6 +98,11 @@
 
       --danger: #D97C6C;
       --today: #E0B368;
+      
+     --success: #6FBF95;
+    --success-soft: #24352C;
+    --undo: #B0B5AE;
+    --undo-soft: #333831;
 
       color-scheme: dark;
     }
@@ -131,7 +153,7 @@
 
 <body class="m-0 bg-[var(--bg)] text-[var(--ink)] font-tajawal px-[18px] pt-[max(28px,env(safe-area-inset-top,0px))] pb-[max(40px,env(safe-area-inset-bottom,0px))]">
 
-  <div class="max-w-[600px] mx-auto">
+ <div class="relative z-[1] max-w-[600px] mx-auto">
 
 
     <!-- ========================================= -->

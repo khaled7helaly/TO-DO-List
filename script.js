@@ -57,11 +57,26 @@ let tasks = [];
 let currentViewDate = null;
 let currentFilter = "all";
 let currentLanguage = "ar";
-let currentTheme = "dark";
 
 
+
+// Theme Toggle
+let currentTheme = localStorage.getItem("theme") || "dark";
+
+document.documentElement.setAttribute(
+    "data-theme",
+    currentTheme
+);
+
+
+themeToggle.textContent =
+    currentTheme === "dark" ? "☀️" : "🌙";
+
+    
 themeToggle.addEventListener("click", () => {
     currentTheme = currentTheme === "light" ? "dark" : "light";
+
+     localStorage.setItem("theme", currentTheme);
 
     document.documentElement.setAttribute(
         "data-theme",
@@ -70,6 +85,114 @@ themeToggle.addEventListener("click", () => {
 
     themeToggle.textContent = currentTheme === "dark" ? "☀️" : "🌙";
 });
+
+
+
+// Language Toggle
+const translations = {
+    ar: {
+        headline: "مهامي",
+        prevDay: "السابق",
+        nextDay: "التالي",
+        todayJump: "ارجع للنهاردة",
+
+        placeholder: "أضف مهمة جديدة…",
+        inputAria: "مهمة جديدة",
+        addLabel: "إضافة المهمة",
+
+        statAll: "الكل",
+        statDone: "منجزة",
+        statPending: "متبقية",
+        statPct: "نسبة الإنجاز",
+
+        tabAll: "الكل",
+        tabActive: "نشطة",
+        tabDone: "منجزة",
+
+        empty: "لسه مفيش مهام هنا، ابدأ بإضافة مهمة",
+
+        complete: "إنجاز",
+        undo: "تراجع",
+        delete: "حذف"
+    },
+
+    en: {
+        headline: "My Tasks",
+        prevDay: "Previous",
+        nextDay: "Next",
+        todayJump: "Back to Today",
+
+        placeholder: "Add a new task…",
+        inputAria: "New task",
+        addLabel: "Add task",
+
+        statAll: "All",
+        statDone: "Completed",
+        statPending: "Remaining",
+        statPct: "Completion",
+
+        tabAll: "All",
+        tabActive: "Active",
+        tabDone: "Completed",
+
+        empty: "No tasks here yet. Start by adding a task",
+
+        complete: "Complete",
+        undo: "Undo",
+        delete: "Delete"
+    }
+};
+
+
+function updateLanguage() {
+
+    const elements = document.querySelectorAll("[data-i18n]");
+
+    elements.forEach(element => {
+        const key = element.dataset.i18n;
+
+        element.textContent = translations[currentLanguage][key];
+    });
+
+
+    const placeholders = document.querySelectorAll("[data-i18n-placeholder]");
+
+    placeholders.forEach(element => {
+        const key = element.dataset.i18nPlaceholder;
+
+        element.placeholder = translations[currentLanguage][key];
+    });
+
+
+    const ariaElements = document.querySelectorAll("[data-i18n-aria]");
+
+    ariaElements.forEach(element => {
+        const key = element.dataset.i18nAria;
+
+        element.setAttribute(
+            "aria-label",
+            translations[currentLanguage][key]
+        );
+    });
+
+
+    langToggle.textContent =
+        currentLanguage === "ar" ? "English" : "العربية";
+
+    document.documentElement.lang =
+        currentLanguage === "ar" ? "ar" : "en";
+
+    document.documentElement.dir =
+        currentLanguage === "ar" ? "rtl" : "ltr";
+}
+
+langToggle.addEventListener("click", () => {
+    currentLanguage = currentLanguage === "ar" ? "en" : "ar";
+
+    render();
+});
+
+// /////////////////////////////////////////
 
 //  Local Storage (tasks set & get)
 
@@ -86,6 +209,8 @@ function loadTasksFromStorage() {
     ? JSON.parse(savedData)
     : [];
 }
+
+
 
 
 /////////////////////////////////////////////////////////////////////
@@ -225,29 +350,31 @@ function renderTasks() {
             taskText.textContent = task.text;
 
             taskText.className = `
-            flex-1
-            text-sm
-            text-[var(--text)]
-            font-tajawal
-            ${task.done ? "line-through opacity-50" : ""}
-           `;
+                flex-1
+                min-w-0
+                text-sm
+                text-[var(--text)]
+                font-tajawal
+                break-words
+                ${task.done ? "line-through opacity-50" : ""}
+            `;
 
              // Complete button
             const completeBtn = document.createElement("button");
             completeBtn.textContent = task.done ? "Undo" : "Complete";
 
             completeBtn.className = `
-            px-3
-            py-1.5
-            rounded-lg
-            text-xs
-            font-tajawal
-            transition
-            ${task.done
-                ? "bg-gray-500/10 text-gray-400 hover:bg-gray-500/20"
-                : "bg-green-500/10 text-green-400 hover:bg-green-500/20"
-            }
-        `;
+                px-3
+                py-1.5
+                rounded-lg
+                text-xs
+                font-tajawal
+                transition
+                ${task.done
+                    ? "bg-[var(--undo-soft)] text-[var(--undo)] hover:opacity-80"
+                    : "bg-[var(--success-soft)] text-[var(--success)] hover:opacity-80"
+                }
+            `;
 
             completeBtn.addEventListener("click", () => {
             toggleTaskDone(task.id);
@@ -282,18 +409,19 @@ function renderTasks() {
              taskList.appendChild(li);
 
           // li styling
-           li.className = `
-            flex
-            items-center
-            gap-3
-            p-4
-            mb-3
-            rounded-xl
-            border
-            border-[var(--border)]
-            bg-[var(--card)]
-            shadow-sm
-        `;
+            li.className = `
+                flex
+                items-center
+                gap-3
+                p-4
+                mb-3
+                rounded-xl
+                border
+                border-[var(--border)]
+                bg-[var(--bg2)]
+                shadow-[inset_40px_0_60px_-55px_rgba(0,0,0,0.18)]
+            `;
+                        
 
         });
 
@@ -413,7 +541,8 @@ function render() {
     updateStatistics();
     renderDate();
     updateTodayJump();
-
+    updateLanguage()
+   
 }
 
 

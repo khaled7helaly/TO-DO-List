@@ -1,0 +1,16 @@
+:root[data-theme="light"] body {
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme="light"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image: url(./img/bg.avif);
+  background-size: cover;
+  background-position: center;
+}
