@@ -6,7 +6,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <title>مهامي — قائمة المهام</title>
+  <title>مهامي   </title>
+
+  <link rel="stylesheet" href="style.css">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,7 +198,7 @@
       <button
         id="todayJump"
         data-i18n="todayJump"
-        class="mt-1.5 text-xs underline text-[var(--primary)] hidden">
+        class="mt-1.5 text-xs underline text-[var(--primary)] ">
         ارجع للنهاردة
       </button>
 
@@ -364,44 +366,13 @@
         id="emptyMsg"
         data-i18n="empty"
         hidden>
-        لسه مفيش مهام هنا، ابدأ بإضافة أول مهمة
+        لسه مفيش مهام هنا، ابدأ بإضافة  مهمة
       </p>
 
     </section>
 
 
-    <!-- ========================================= -->
-    <!-- Monthly Progress Chart                     -->
-    <!-- Displays completed tasks for each day    -->
-    <!-- of the current month                      -->
-    <!-- ========================================= -->
-
-    <section class="pt-6 border-t border-[var(--border)]">
-
-      <!-- Chart Header -->
-      <div class="flex justify-between items-baseline mb-3.5">
-
-        <h2
-          data-i18n="chartTitle"
-          class="text-base m-0 font-bold">
-          التقدم خلال الشهر
-        </h2>
-
-        <span
-          id="monthLabel"
-          class="text-[var(--muted)] text-sm">
-        </span>
-
-      </div>
-
-
-      <!-- Dynamic Chart Bars -->
-      <div
-        class="flex items-end gap-[3px] h-[110px] overflow-x-auto pb-0.5"
-        id="bars">
-      </div>
-
-    </section>
+    
 
   </div>
 

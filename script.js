@@ -60,35 +60,16 @@ let currentLanguage = "ar";
 let currentTheme = "dark";
 
 
-// Helper Functions
+themeToggle.addEventListener("click", () => {
+    currentTheme = currentTheme === "light" ? "dark" : "light";
 
-function getTodayKey() {
-    const today = new Date();
+    document.documentElement.setAttribute(
+        "data-theme",
+        currentTheme
+    );
 
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-
-}
- currentViewDate = getTodayKey();
-
-
- function formatDisplayDate(dateKey, lang = "ar") {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(year, month - 1, day); 
-  const locale = lang === "ar" ? "ar-EG" : "en-US";
-  
-  return date.toLocaleDateString(locale, {
-    weekday: "long", 
-    year: "numeric", 
-    month: "long", 
-    day: "numeric"
-  });
-}
-/////////////////////////////////////////////////////
-
+    themeToggle.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+});
 
 //  Local Storage (tasks set & get)
 
@@ -108,6 +89,84 @@ function loadTasksFromStorage() {
 
 
 /////////////////////////////////////////////////////////////////////
+
+
+//getToday
+
+function getTodayKey( date = new Date()) {
+    // const today = new Date();
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+
+  // Format date for display
+
+ function formatDisplayDate(dateKey, lang = "ar") {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const date = new Date(year, month - 1, day); 
+  const locale = lang === "ar" ? "ar-EG" : "en-US";
+  
+  return date.toLocaleDateString(locale, {
+    weekday: "long", 
+    year: "numeric", 
+    month: "long", 
+    day: "numeric"
+  });
+}
+ 
+// Render the current view date in the UI
+
+function renderDate() {
+    viewDate.textContent = formatDisplayDate(currentViewDate, currentLanguage);
+    
+}
+  currentViewDate = getTodayKey();
+  renderDate();
+
+
+////////////////////////////////////////////////////
+//prev day btn
+prevDayBtn.addEventListener("click", () => {
+    const date = new Date(currentViewDate);
+    date.setDate(date.getDate() - 1);
+    currentViewDate =  getTodayKey(date);
+    render()
+});
+//next day btn
+nextDayBtn.addEventListener("click", () => {
+    const date = new Date(currentViewDate);
+    date.setDate(date.getDate() + 1);
+    currentViewDate =  getTodayKey(date);
+    render()
+});
+//current day 
+todayJumpBtn.addEventListener("click", () => {
+    currentViewDate = getTodayKey();
+
+    render();
+});
+
+// function updateTodayJump() {
+//    const today = getTodayKey();
+
+//    todayJumpBtn.style.visibility = currentViewDate === today ? "hidden" : "visible";
+// }
+
+function updateTodayJump() {
+    const today = getTodayKey();
+
+    todayJumpBtn.hidden = currentViewDate === today;
+}
+
+/////////////////////////////////////////////////////
+
 
 // Task Operations  
 
@@ -136,6 +195,111 @@ addBtn.addEventListener("click", () => {
      render();
 })
 
+
+//////////////////////////////////////////////////
+
+// Get tasks for the current view date ---------
+
+// function getVisibleTasks() {
+//     return tasks.filter( task => task.date === currentViewDate );
+// }
+
+/////////////////////////////////
+
+// Render tasks for the current view date ---------
+
+function renderTasks() {
+    taskList.innerHTML = "";
+
+    const visibleTasks = getVisibleTasks();
+
+     visibleTasks.forEach(task => {
+            const li = document.createElement("li");
+
+            li.dataset.id = task.id;
+
+           
+
+            // Task text
+            const taskText = document.createElement("span");
+            taskText.textContent = task.text;
+
+            taskText.className = `
+            flex-1
+            text-sm
+            text-[var(--text)]
+            font-tajawal
+            ${task.done ? "line-through opacity-50" : ""}
+           `;
+
+             // Complete button
+            const completeBtn = document.createElement("button");
+            completeBtn.textContent = task.done ? "Undo" : "Complete";
+
+            completeBtn.className = `
+            px-3
+            py-1.5
+            rounded-lg
+            text-xs
+            font-tajawal
+            transition
+            ${task.done
+                ? "bg-gray-500/10 text-gray-400 hover:bg-gray-500/20"
+                : "bg-green-500/10 text-green-400 hover:bg-green-500/20"
+            }
+        `;
+
+            completeBtn.addEventListener("click", () => {
+            toggleTaskDone(task.id);
+             });
+
+
+             // Delete button
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+                deleteBtn.className = `
+                px-3
+                py-1.5
+                rounded-lg
+                text-xs
+                font-tajawal
+                text-red-400
+                bg-red-500/10
+                hover:bg-red-500/20
+                transition
+                `;
+
+            deleteBtn.addEventListener("click", () => {
+                deleteTask(task.id);
+            });
+
+
+             
+             li.appendChild(taskText);
+             li.appendChild(completeBtn);
+             li.appendChild(deleteBtn);
+
+             taskList.appendChild(li);
+
+          // li styling
+           li.className = `
+            flex
+            items-center
+            gap-3
+            p-4
+            mb-3
+            rounded-xl
+            border
+            border-[var(--border)]
+            bg-[var(--card)]
+            shadow-sm
+        `;
+
+        });
+
+}
+
+
 // delete task
 function deleteTask(taskId) {
     tasks = tasks.filter(t => t.id !== taskId);
@@ -155,68 +319,7 @@ function toggleTaskDone(taskId) {
      render();
 }
 
-//////////////////////////////////////////////////
-
-function render() {
-    renderTasks();
-    renderEmptyMessage()
-    updateStatistics();
-
-}
-
-////////////////////////////
-
-function getVisibleTasks() {
-    return tasks.filter( task => task.date === currentViewDate );
-}
-
-/////////////////////////////////
-
-// Render tasks for the current view date ---------
-function renderTasks() {
-    taskList.innerHTML = "";
-
-    const visibleTasks = getVisibleTasks();
-
-     visibleTasks.forEach(task => {
-            const li = document.createElement("li");
-
-            li.dataset.id = task.id;
-
-           
-
-            // Task text
-            const taskText = document.createElement("span");
-            taskText.textContent = task.text;
-
-             // Complete button
-            const completeBtn = document.createElement("button");
-            completeBtn.textContent = task.done ? "Undo" : "Complete";
-
-             completeBtn.addEventListener("click", () => {
-            toggleTaskDone(task.id);
-             });
-
-
-             // Delete button
-            const deleteBtn = document.createElement("button");
-            deleteBtn.textContent = "Delete";
-
-            deleteBtn.addEventListener("click", () => {
-                deleteTask(task.id);
-            });
-
-
-             
-             li.appendChild(taskText);
-             li.appendChild(completeBtn);
-             li.appendChild(deleteBtn);
-
-             taskList.appendChild(li);
-
-        });
-
-}
+////////////////////////////////////////////
 
 // Render empty message if no tasks for the current view date ---------
 function renderEmptyMessage() {
@@ -232,8 +335,43 @@ function renderEmptyMessage() {
     //   render();
 }
 ///////////////////////////////
+// getVisibleTasks
 
-//Task Actions
+// Filter tasks based on the current view date and filter
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        currentFilter = tab.dataset.filter;
+
+        tabs.forEach(t => {
+            t.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        render();
+    });
+});
+
+// Get tasks for the current view date and filter
+function getVisibleTasks() {
+    return tasks.filter(task => {
+        if (task.date !== currentViewDate) {
+            return false;
+        }
+
+        if (currentFilter === "active") {
+            return task.done === false;
+        }
+
+        if (currentFilter === "done") {
+            return task.done === true;
+        }
+
+        return true;
+    });
+}
+
+///////////////////////////////
 
 //// Statistics
 
@@ -251,17 +389,34 @@ function updateStatistics() {
     statPending.textContent = pending;
 
 
-    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-    statPct.textContent = `${pct}%`;
+    //    if (total === 0) {
+    //         pct = 0;
+    //     } else {
+    //         pct = Math.round((done / total) * 100);
+    //     }
+
+    //  ``  --> Backtick
+        const pct = total === 0 ? 0 : (Math.round((done / total) * 100));
+            statPct.textContent = `${pct}%`;
+
+}
+//////////////////////////////////////////////
 
 
 
-  
+
+
+
+function render() {
+    renderTasks();
+    renderEmptyMessage()
+    updateStatistics();
+    renderDate();
+    updateTodayJump();
+
 }
 
 
 
-
-
-
-
+ tasks = loadTasksFromStorage();
+ render();
