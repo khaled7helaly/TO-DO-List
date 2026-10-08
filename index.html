@@ -13,8 +13,8 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Tajawal:wght@400;500;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400..700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -55,6 +55,9 @@
       --undo: #555B55;
       --undo-soft: #E5E5E5;
 
+          --task-dark: #065e2d;
+    --task-light: #064119;
+
       color-scheme: light;
 
 
@@ -79,6 +82,9 @@
         --success-soft: #24352C;
         --undo: #B0B5AE;
         --undo-soft: #333831;
+
+            --task-dark: #252A26;
+    --task-light: #303630;
 
         color-scheme: dark;
 
@@ -171,8 +177,13 @@
 
       <button
         id="themeToggle"
-        class="text-base px-2 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)]">
-        🌙
+        aria-label="Toggle theme"
+        class="w-[36px] h-[36px] flex items-center justify-center rounded-full border border-[var(--border)] text-[var(--muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition">
+
+        <span class="material-symbols-outlined">
+          dark_mode
+        </span>
+
       </button>
 
     </div>
@@ -378,7 +389,7 @@
       <!-- Dynamic Task List -->
       <ul
         id="list"
-        class="list-none m-0 p-0">
+        class="list-none m-0 p-0 max-h-[400px] overflow-y-auto pr-2">
       </ul>
 
 

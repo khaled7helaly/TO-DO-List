@@ -10,7 +10,46 @@
   z-index: 0;
   pointer-events: none;
 
-  background-image: url(./img/bg.avif);
+  background-image: url(./img/bg2.avif);
   background-size: cover;
   background-position: center;
+}
+#list li:nth-child(odd) {
+    background-color: var(--task-dark);
+}
+
+#list li:nth-child(even) {
+    background-color: var(--task-light);
+}
+
+
+
+
+
+
+
+
+
+
+#list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+/* Chrome / Edge */
+#list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+}
+
+#list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }

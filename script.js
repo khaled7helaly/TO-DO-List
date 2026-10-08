@@ -34,11 +34,6 @@ const langToggle = document.getElementById("langToggle");
 const themeToggle = document.getElementById("themeToggle");
 
 
-// Monthly Chart
-
-const monthLabel = document.getElementById("monthLabel");
-const bars = document.getElementsByClassName("bars");
-
 
 
 // Tabs
@@ -69,10 +64,12 @@ document.documentElement.setAttribute(
 );
 
 
-themeToggle.textContent =
-    currentTheme === "dark" ? "☀️" : "🌙";
+themeToggle.innerHTML = `
+    <span class="material-symbols-outlined">
+        ${currentTheme === "dark" ? "light_mode" : "dark_mode"}
+    </span>
+`;
 
-    
 themeToggle.addEventListener("click", () => {
     currentTheme = currentTheme === "light" ? "dark" : "light";
 
@@ -83,7 +80,11 @@ themeToggle.addEventListener("click", () => {
         currentTheme
     );
 
-    themeToggle.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+    themeToggle.innerHTML = `
+    <span class="material-symbols-outlined">
+        ${currentTheme === "dark" ? "light_mode" : "dark_mode"}
+    </span>
+`;
 });
 
 
